@@ -1,0 +1,148 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Dashboard - JobConnect{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">My Dashboard</h2>
+        <p class="text-muted">
+            Welcome, {{ current_user.name }}!
+            Track your job applications here.
+        </p>
+    </div>
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+            <div class="card dashboard-card shadow-sm p-3">
+                <h6>Total Applications</h6>
+                <h2>{{ applications|length }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card dashboard-card shadow-sm p-3">
+                <h6>Pending Applications</h6>
+                <h2>
+                    {{ applications|selectattr('status', 'equalto', 'Pending')|list|length }}
+                </h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card dashboard-card shadow-sm p-3">
+                <h6>Shortlisted</h6>
+                <h2>
+                    {{ applications|selectattr('status', 'equalto', 'Shortlisted')|list|length }}
+                </h2>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm border-0 p-4">
+
+        <h4 class="fw-bold mb-4">My Job Applications</h4>
+
+        {% if applications %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for application in applications %}
+
+                    <tr>
+
+                        <td>
+                            {{ application.job.title }}
+                        </td>
+
+                        <td>
+                            {{ application.job.company }}
+                        </td>
+
+                        <td>
+                            {{ application.applied_at.strftime('%d %b %Y') }}
+                        </td>
+
+                        <td>
+
+                            {% if application.status == 'Accepted' %}
+                                <span class="badge bg-success">
+                                    Accepted
+                                </span>
+
+                            {% elif application.status == 'Rejected' %}
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+
+                            {% elif application.status == 'Shortlisted' %}
+                                <span class="badge bg-primary">
+                                    Shortlisted
+                                </span>
+
+                            {% elif application.status == 'Reviewed' %}
+                                <span class="badge bg-info text-dark">
+                                    Reviewed
+                                </span>
+
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-5">
+
+            <h5>No Applications Yet</h5>
+
+            <p class="text-muted">
+                You haven't applied for any jobs yet.
+            </p>
+
+            <a href="{{ url_for('jobs.jobs_list') }}"
+               class="btn btn-primary">
+                Browse Jobs
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+  
