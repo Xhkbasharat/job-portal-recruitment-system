@@ -1,0 +1,121 @@
+
+{% extends "base.html" %}
+
+{% block title %}Find Jobs - JobConnect{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Explore Job Opportunities</h2>
+        <p class="text-muted">
+            Find the right opportunity for your career.
+        </p>
+    </div>
+
+    <!-- Job Search Form -->
+    <div class="card shadow-sm border-0 p-4 mb-4">
+
+        <form method="GET" action="{{ url_for('jobs.jobs_list') }}"
+              class="row g-3">
+
+            <div class="col-md-5">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Job title or company"
+                       value="{{ request.args.get('search', '') }}">
+            </div>
+
+            <div class="col-md-4">
+                <input type="text"
+                       name="location"
+                       class="form-control"
+                       placeholder="Enter location"
+                       value="{{ request.args.get('location', '') }}">
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit"
+                        class="btn btn-primary w-100">
+                    Search Jobs
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- Job Listings -->
+    <div class="row g-4">
+
+        {% for job in jobs %}
+
+        <div class="col-md-6">
+
+            <div class="card job-card shadow-sm h-100 border-0">
+
+                <div class="card-body">
+
+                    <h4 class="fw-bold">{{ job.title }}</h4>
+
+                    <h6 class="text-primary">
+                        {{ job.company }}
+                    </h6>
+
+                    <p class="text-muted mb-2">
+                        📍 {{ job.location }}
+                    </p>
+
+                    <p>
+                        <span class="badge bg-primary">
+                            {{ job.job_type }}
+                        </span>
+
+                        {% if job.salary %}
+                        <span class="badge bg-success">
+                            {{ job.salary }}
+                        </span>
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        {{ job.description[:150] }}
+                        {% if job.description|length > 150 %}...{% endif %}
+                    </p>
+
+                    <p class="text-muted small">
+                        Posted: {{ job.created_at.strftime('%d %b %Y') }}
+                    </p>
+
+                    <a href="{{ url_for('jobs.job_detail', job_id=job.id) }}"
+                       class="btn btn-outline-primary">
+                        View Details
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% else %}
+
+        <div class="col-12 text-center py-5">
+
+            <h4>No Jobs Found</h4>
+
+            <p class="text-muted">
+                Try changing your search keywords or location.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
