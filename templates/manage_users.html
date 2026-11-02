@@ -1,0 +1,106 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Users - JobConnect{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Manage Users</h2>
+        <p class="text-muted">
+            View and manage registered job seekers and recruiters.
+        </p>
+    </div>
+
+    <div class="card shadow-sm border-0 p-4">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Registered</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for user in users %}
+
+                    <tr>
+                        <td>{{ user.id }}</td>
+
+                        <td>{{ user.name }}</td>
+
+                        <td>{{ user.email }}</td>
+
+                        <td>
+                            {% if user.role == 'admin' %}
+                                <span class="badge bg-danger">Admin</span>
+                            {% elif user.role == 'recruiter' %}
+                                <span class="badge bg-primary">Recruiter</span>
+                            {% else %}
+                                <span class="badge bg-success">Job Seeker</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ user.created_at.strftime('%d %b %Y') }}
+                        </td>
+
+                        <td>
+                            {% if user.role != 'admin' %}
+
+                            <form method="POST"
+                                  action="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                                  onsubmit="return confirm('Are you sure you want to delete this user?');">
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+
+                            </form>
+
+                            {% else %}
+
+                            <span class="text-muted">Protected</span>
+
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            No users registered yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <a href="{{ url_for('admin.dashboard') }}"
+           class="btn btn-outline-secondary mt-3">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
