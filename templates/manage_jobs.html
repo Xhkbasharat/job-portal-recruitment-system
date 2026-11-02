@@ -1,0 +1,103 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manage Jobs - JobConnect{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Manage Job Listings</h2>
+        <p class="text-muted">
+            Monitor and control all jobs posted on JobConnect.
+        </p>
+    </div>
+
+    <div class="card shadow-sm border-0 p-4">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Recruiter</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for job in jobs %}
+
+                    <tr>
+                        <td>{{ job.id }}</td>
+
+                        <td>{{ job.title }}</td>
+
+                        <td>{{ job.company }}</td>
+
+                        <td>{{ job.location }}</td>
+
+                        <td>{{ job.recruiter.name }}</td>
+
+                        <td>
+                            {% if job.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <form method="POST"
+                                  action="{{ url_for('admin.toggle_job', job_id=job.id) }}">
+
+                                {% if job.is_active %}
+                                    <button type="submit"
+                                            class="btn btn-sm btn-warning">
+                                        Deactivate
+                                    </button>
+                                {% else %}
+                                    <button type="submit"
+                                            class="btn btn-sm btn-success">
+                                        Activate
+                                    </button>
+                                {% endif %}
+
+                            </form>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            No job listings available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <a href="{{ url_for('admin.dashboard') }}"
+           class="btn btn-outline-secondary mt-3">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
